@@ -5,11 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
   
 def get_db_connection():
     conn = sqlite3.connect('database.db', timeout=10)
-    conn.row_factory = sqlite3.Row  # Allows column access by name
+    conn.row_factory = sqlite3.Row
     return conn
  
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
+app.secret_key = "einlskyehkl345j jopiw34;klj648jlkrj84kl5320kdlfmyt6'd'l[p34kuj3p]"
 
 @app.route('/')
 def home():
@@ -26,8 +26,6 @@ def login():
         
         cursor.execute('SELECT * FROM user WHERE username = ?', (username,))
         user = cursor.fetchone()
-        cursor.execute('SELECT * FROM user WHERE username = ? AND password = ?', (username, password))
-        ValidUser = cursor.fetchone()
         
         conn.close()
         
