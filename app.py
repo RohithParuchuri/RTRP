@@ -1,5 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, request
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
+
   
 def get_db_connection():
     conn = sqlite3.connect('database.db', timeout=10)
@@ -7,6 +9,7 @@ def get_db_connection():
     return conn
  
 app = Flask(__name__)
+app.secret_key = "your_secret_key"
 
 @app.route('/')
 def home():
@@ -30,10 +33,10 @@ def login():
         
         if not user:
             return "No User Name Found"
-        elif ValidUser:
+        elif check_password_hash(user["password"], password):
             return "Successful Login!"
         else:
-            return "Login Falied"
+            return "Login Failed"
 
     return render_template('login.html')
 
@@ -42,6 +45,7 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password") 
+        hashed_password = generate_password_hash(password)
         rpassword = request.form.get("Repassword")
         if password != rpassword:
             return "Error: Passwords do not match"
@@ -50,7 +54,7 @@ def register():
         cursor = conn.cursor()
 
         try:
-            cursor.execute('INSERT INTO user (username, password) VALUES (?, ?)', (username, password))
+            cursor.execute('INSERT INTO user (username, password) VALUES (?, ?)', (username, hashed_password))
             conn.commit() 
         except sqlite3.IntegrityError:
             return "Error: Username already exists"
