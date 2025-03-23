@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login to Alerto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_back_ios" />
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body> 
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <form method="post">
+        <div class="title">
+            <a href="{{ url_for('home') }}"><span class="material-symbols-outlined">arrow_back_ios</span></a>
+            <h3>Login Here</h3>
+        </div>
+        <label for="username">Username</label>
+        <input type="text" placeholder="Email or Phone" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" placeholder="Password" id="password" name="password" required>
+
+        <button type="submit">Log In</button>
+        <div class="rest">
+          <div><a href="">Fogot Password</a></div>
+          <div><a href="{{ url_for('register') }}">Sign Up</a></div>
+        </div>
+    </form>
+</body>
+</html>

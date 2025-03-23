@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Registration Alerto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_back_ios" />
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <form method="post">
+        <a href="{{ url_for('login') }}"><span class="material-symbols-outlined">arrow_back_ios</span></a>
+
+        <h3>Register Here</h3>
+
+        <label for="username">Username</label>
+        <input type="text" placeholder="Email or Phone" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" placeholder="Password" id="password" name="password" required>
+
+        <label for="Repassword">Re-enter Password</label>
+        <input type="password" placeholder="Re-enter Password" id="Repassword" name="Repassword" required>
+
+        <button type="submit">Register</button>
+        <div class="rest">
+          <div><a href="">Fogot Password</a></div>
+          <div><a href="{{ url_for('login') }}">Log In</a></div>
+        </div>
+    </form>
+</body>
+</html>
