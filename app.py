@@ -17,6 +17,7 @@ app.secret_key = "einlskyehkl345j jopiw34;klj648jlkrj84kl5320kdlfmyt6'd'l[p34kuj
 def home():
     profileSec = session.get('profileSec', 0)
     uName = session.get('username', 'None')
+    uid = session.get('user_id', 0)
     return render_template('index.html', profileSec=profileSec)
 
 
@@ -42,6 +43,9 @@ def login():
             session['username'] = username
             session['profileSec'] = 1
             flash(f"Thanks for posting!", category="success")
+
+            session['user_id'] = user['id']
+            print('working')
             return redirect(url_for("profile"))
         else:
             return "Login Failed"
@@ -63,11 +67,14 @@ def register():
 
         try:
             cursor.execute('INSERT INTO user (username, password) VALUES (?, ?)', (username, hashed_password))
+            user_id = cursor.lastrowid
+            cursor.execute('INSERT INTO user_profile (user_id) VALUES (?)', (user_id,))
+            session['user_id']=user_id
             conn.commit() 
         except sqlite3.IntegrityError:
             return "Error: Username already exists"
-        
-        conn.close()
+        finally:
+            conn.close()
 
         return redirect(url_for('login')) 
     return render_template('register.html')
@@ -77,12 +84,60 @@ def profile():
     if session.get('profileSec') != 1:
         flash("You must be logged in to access the profile page.", category="danger")
         return redirect(url_for('login'))
-    return render_template('profile.html', username = session.get('username'))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT u.username, p.full_name, p.age, p.sex, p.addres, 
+               p.phone, p.email, p.emergency_contact, p.blood_type
+        FROM user u
+        JOIN user_profile p ON u.id = p.user_id
+        WHERE u.username = ?;
+    ''', (session.get("username"),))
+    user_data = cursor.fetchone()
+    conn.close()
+    d = dict(user_data) if user_data else None
+    return render_template('profile.html', username = session.get('username'), user_data=d)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session['profileSec'] = 0
     session['username'] = 'None'
+    return redirect(url_for('home'))
+
+@app.route('/editProfile', methods = ['GET', 'POST'])
+def editProfile():
+    if request.method == "POST":
+        try:
+            full_name = request.form["full_name"]
+            age = request.form["age"]
+            sex = request.form["sex"]
+            address = request.form["address"]
+            phone = request.form["phone"]
+            email = request.form["email"]
+            emergency_contact = request.form["emergency_contact"]
+            blood_type = request.form["blood_type"]
+
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE user_profile
+                SET full_name = ?,
+                    age = ?,
+                    sex = ?,
+                    addres = ?,
+                    phone = ?,
+                    email = ?,
+                    emergency_contact = ?,
+                    blood_type = ?
+                WHERE user_id = ?
+            """, (full_name, age, sex, address, phone, email, emergency_contact, blood_type, session.get('user_id')))
+            print(session.get('user_id'))
+            conn.commit()
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            conn.close()
+
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
