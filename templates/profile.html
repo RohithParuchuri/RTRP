@@ -41,7 +41,7 @@
               <a href="{{url_for('home')}}" class="nav-link ">Home</a>
             </li>
             <li>
-              <a href="inventory.html" class="nav-link">Inventory</a>
+              <a href="{{url_for('inventory') if not isDoc else url_for('docpage')}}" class="nav-link">{{'Inventory' if not isDoc else 'Docpage'}}</a>
             </li>
           </ul>
         </nav>
@@ -190,7 +190,7 @@
                 <img src="static/img/dp.png" alt="Profile">
               </div>
               <div>
-                <h1 class="profile-name">{{username}}</h1>
+                <h1 class="profile-name">{{isDoc}} : {{username}}</h1>
                 Name: <input type="text" class="full_Name" name="full_name" value = "{{ user_data['full_name'] }}" placeholder="Full Name"> <br>
                 Age: <input type="text" class="age" name="age" value = "{{ user_data['age'] }}" placeholder="Years"><br>
                 Sex: <input type="text" class="sex" name="sex" value = "{{ user_data['sex'] }}" placeholder="Male/Female">

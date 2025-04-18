@@ -18,15 +18,17 @@ def home():
     profileSec = session.get('profileSec', 0)
     uName = session.get('username', 'None')
     uid = session.get('user_id', 0)
+    isDoc = session.get('isDoc', 0)
     return render_template('index.html', profileSec=profileSec)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('profileSec') == 1:
+        return redirect(url_for("profile"))
+    
     if request.method == "POST":
-        if session.get('profileSec') == 1:
-            return redirect(url_for("profile"))
-        
+
         username = request.form.get("username")
         password = request.form.get("password") 
         conn = get_db_connection()
@@ -45,6 +47,8 @@ def login():
             flash(f"Thanks for posting!", category="success")
 
             session['user_id'] = user['id']
+
+            session['isDoc'] = user['is_doctor']
             print('working')
             return redirect(url_for("profile"))
         else:
@@ -59,6 +63,13 @@ def register():
         password = request.form.get("password") 
         hashed_password = generate_password_hash(password)
         rpassword = request.form.get("Repassword")
+        isDoc = request.form.get("isDoctor")
+
+        if isDoc == None:
+            isDoc = 0
+        else:
+            isDoc = 1
+
         if password != rpassword:
             return "Error: Passwords do not match"
        
@@ -66,11 +77,12 @@ def register():
         cursor = conn.cursor()
 
         try:
-            cursor.execute('INSERT INTO user (username, password) VALUES (?, ?)', (username, hashed_password))
+            cursor.execute('INSERT INTO user (username, password, is_doctor) VALUES (?, ?, ?)', (username, hashed_password, isDoc))
             user_id = cursor.lastrowid
             cursor.execute('INSERT INTO user_profile (user_id) VALUES (?)', (user_id,))
+            session['isDoc'] = isDoc
             session['user_id']=user_id
-            conn.commit() 
+            conn.commit()
         except sqlite3.IntegrityError:
             return "Error: Username already exists"
         finally:
@@ -78,6 +90,19 @@ def register():
 
         return redirect(url_for('login')) 
     return render_template('register.html')
+
+@app.route('/docpage', methods=['GET', 'POST'])
+def docpage():
+    if session.get('isDoc', 0) == 0:
+        return redirect(url_for('login'))
+    print(session.get('isDoc'))
+    return render_template('docpage.html')
+
+@app.route('/inventory', methods=['GET', 'POST'])
+def inventory():
+    if session.get('isDoc', 0) == 1:
+        return redirect(url_for('login'))
+    return render_template('inventory.html')
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -96,7 +121,7 @@ def profile():
     user_data = cursor.fetchone()
     conn.close()
     d = dict(user_data) if user_data else None
-    return render_template('profile.html', username = session.get('username'), user_data=d)
+    return render_template('profile.html', username = session.get('username'), user_data=d, isDoc = session.get('isDoc'))
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
