@@ -1,0 +1,118 @@
+.contact-section {
+    background-color: #e6e6e6;
+    padding: 50px;
+}
+
+.contact-buttons .btn {
+    margin-right: 10px;
+}
+
+.contact-buttons .material-symbols-outlined {
+    font-size: 22px;
+    margin: auto;
+}
+
+.footer {
+    background-color: #fff;
+    /* White background */
+    padding: 40px 20px;
+    /* Top-Bottom, Left-Right padding */
+}
+
+.footer h5 {
+    font-weight: bold;
+}
+
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer ul li {
+    margin-bottom: 5px;
+}
+
+.footer .social-icons a {
+    font-size: 20px;
+    margin-right: 10px;
+    color: gray;
+    text-decoration: none;
+}
+
+.footer .social-icons a:hover {
+    color: black;
+}
+
+.navbar {
+    background-color: white !important;
+}
+
+.navbar-brand {
+    margin-left: 120px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: xxx-large;
+}
+
+.navbar .material-symbols-outlined {
+    font-size: 44px !important;
+    color: #4F378A;
+}
+
+.navbar .material-symbols-outlined:first-child {
+    font-size: 44px !important;
+    color: #6B2F45;
+}
+
+main .card {
+    border: none;
+    box-shadow: none;
+}
+
+.card-title {
+    font-size: xx-large;
+    font-weight: 700;
+}
+
+main .card .btn {
+    background-color: black;
+    padding: 8px 12px 8px 12px;
+    border-radius: 8px;
+}
+
+main {
+    margin-left: 40px;
+    margin-top: 50px;
+    font-family: "Inter", sans-serif;
+    border: none;
+}
+
+.features {
+    margin-top: 50px;
+}
+
+.features h1 {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    padding-left: 15px;
+    margin-left: 40px;
+    margin-bottom: 20px;
+}
+
+.searchbar {
+    margin-top: 50px !important;
+    margin-bottom: 50px !important;
+}
+
+
+.form-control {
+    height: 56px;
+    border: none;
+    background-color: #ECE6F0;
+}
+
+.input-group-text {
+    border-radius: 20px;
+    border: none;
+    background-color: #ECE6F0 !important;
+}

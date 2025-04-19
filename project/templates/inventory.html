@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicine Inventory</title>
+  <link rel="stylesheet" href="static/inventory.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="navbar-brand">Alerto</a>
+    <div class="navbar-nav">
+      <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+    </div>
+    <div class="navbar-right">
+      <a href="{{ url_for('profile') }}" >
+      <div class="avatar">
+        <img src="static/img/dp.png" alt="Profile">
+      </div>
+    </a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Inventory</h1>
+    
+    <div class="summary-cards">
+      <div class="card card-expired">
+        <div class="card-icon icon-expired">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Completed Medicines</h3>
+          <p>12</p>
+        </div>
+      </div>
+      
+      <!-- <div class="card card-expiring">
+        <div class="card-icon icon-expiring">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="6" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Expiring Soon</h3>
+          <p>28</p>
+        </div>
+      </div> -->
+      
+      <div class="card card-active">
+        <div class="card-icon icon-active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Active Stock</h3>
+          <p>156</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- <div class="box">
+      <h2 class="box-title">Add New Medicine</h2>
+      <form id="addMedicineForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="medicineName">Medicine Name</label>
+            <input type="text" id="medicineName" class="form-control" placeholder="Enter medicine name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" class="form-control" placeholder="Enter quantity" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="expiryDate">Expiry Date</label>
+            <input type="date" id="expiryDate" class="form-control" required>
+          </div>
+        </div>-->
+        
+        <button onclick="window.location.href='docpage.html'" type="submit" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Medicine
+        </button>
+      </form>
+    </div> 
+    
+    <div class="box">
+      <div class="inventory-header">
+        <h2 class="box-title">Medicine Inventory</h2>
+        <div class="search-box">
+          <div class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search medicines...">
+        </div>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Medicine Name</th>
+            <th>Batch No.</th>
+            <th>Expiry Date</th>
+            <th>Quantity</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="medicineTableBody">
+          <!-- Table content will be dynamically generated -->
+        </tbody>
+      </table>
+      
+      <div class="pagination">
+        <span class="pagination-info" id="paginationInfo">Showing 1 to 3 of 50 entries</span>
+        <button class="page-btn" id="prevBtn">Previous</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn" id="nextBtn">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample medicine data
+    const medicineData = [
+      { id: 1, name: "Paracetamol 500mg", batch: "B12345", expiryDate: "2024-12-31", quantity: 1000, status: "active" },
+      { id: 2, name: "Amoxicillin 250mg", batch: "B12346", expiryDate: "2024-03-15", quantity: 500, status: "expiring" },
+      { id: 3, name: "Ibuprofen 400mg", batch: "B12347", expiryDate: "2023-12-31", quantity: 200, status: "expired" },
+      { id: 4, name: "Aspirin 100mg", batch: "B12348", expiryDate: "2025-06-30", quantity: 800, status: "active" },
+      { id: 5, name: "Cetirizine 10mg", batch: "B12349", expiryDate: "2024-04-20", quantity: 350, status: "expiring" }
+    ];
+
+    // DOM Elements
+    const medicineTableBody = document.getElementById('medicineTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const addMedicineForm = document.getElementById('addMedicineForm');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Pagination variables
+    let currentPage = 1;
+    const itemsPerPage = 3;
+    let filteredData = [...medicineData];
+
+    // Format date function
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    }
+
+    // Determine status based on expiry date
+    function getStatus(expiryDate) {
+      const today = new Date();
+      const expiry = new Date(expiryDate);
+      
+      if (expiry < today) {
+        return "expired";
+      }
+      
+      // If within 90 days of expiry
+      const ninetyDaysFromNow = new Date();
+      ninetyDaysFromNow.setDate(today.getDate() + 90);
+      
+      if (expiry <= ninetyDaysFromNow) {
+        return "expiring";
+      }
+      
+      return "active";
+    }
+
+    // Render medicines table
+    function renderTable() {
+      medicineTableBody.innerHTML = '';
+      
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const paginatedData = filteredData.slice(start, end);
+      
+      if (paginatedData.length === 0) {
+        medicineTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No medicines found</td></tr>';
+        return;
+      }
+      
+      paginatedData.forEach(medicine => {
+        const row = document.createElement('tr');
+        
+        // Status classes
+        let statusClass = '';
+        if (medicine.status === 'active') statusClass = 'status-active';
+        else if (medicine.status === 'expiring') statusClass = 'status-expiring';
+        else if (medicine.status === 'expired') statusClass = 'status-expired';
+        
+        // Format the status text
+        let statusText = medicine.status.charAt(0).toUpperCase() + medicine.status.slice(1);
+        
+        row.innerHTML = \`
+          <td>\${medicine.name}</td>
+          <td>\${medicine.batch}</td>
+          <td>\${formatDate(medicine.expiryDate)}</td>
+          <td>\${medicine.quantity}</td>
+          <td><span class="status-badge \${statusClass}">\${statusText}</span></td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-btn edit-btn" data-id="\${medicine.id}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="action-btn delete-btn" data-id="\${medicine.id}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        \`;
+        
+        medicineTableBody.appendChild(row);
+      });
+      
+      // Update pagination info
+      paginationInfo.textContent = \`Showing \${start + 1} to \${Math.min(end, filteredData.length)} of \${filteredData.length} entries\`;
+    }
+
+    // Init
+    renderTable();
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      
+      filteredData = medicineData.filter(medicine => 
+        medicine.name.toLowerCase().includes(searchTerm) ||
+        medicine.batch.toLowerCase().includes(searchTerm)
+      );
+      
+      currentPage = 1; // Reset to first page on search
+      renderTable();
+    });
+
+    // Add medicine form submission
+    addMedicineForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const medicineName = document.getElementById('medicineName').value;
+      const quantity = document.getElementById('quantity').value;
+      const expiryDate = document.getElementById('expiryDate').value;
+      
+      // Generate a new batch number
+      const batchPrefix = 'B';
+      const batchNum = Math.floor(10000 + Math.random() * 90000);
+      const batchNo = batchPrefix + batchNum;
+      
+      const status = getStatus(expiryDate);
+      
+      // Create new medicine object
+      const newMedicine = {
+        id: medicineData.length + 1,
+        name: medicineName,
+        batch: batchNo,
+        expiryDate: expiryDate,
+        quantity: parseInt(quantity),
+        status: status
+      };
+      
+      // Add to data array
+      medicineData.unshift(newMedicine);
+      filteredData = [...medicineData];
+      
+      // Reset form
+      addMedicineForm.reset();
+      
+      // Update display
+      renderTable();
+      
+      // Show confirmation
+      alert(\`Medicine "\${medicineName}" has been added successfully!\`);
+    });
+
+    // Edit and delete button functionality
+    medicineTableBody.addEventListener('click', function(e) {
+      if (e.target.closest('.edit-btn')) {
+        const id = e.target.closest('.edit-btn').dataset.id;
+        alert(\`Edit functionality for medicine ID: \${id} would open here\`);
+      } else if (e.target.closest('.delete-btn')) {
+        const id = e.target.closest('.delete-btn').dataset.id;
+        const confirmDelete = confirm('Are you sure you want to delete this medicine?');
+        
+        if (confirmDelete) {
+          // Find index of medicine with this id
+          const index = medicineData.findIndex(med => med.id == id);
+          
+          if (index !== -1) {
+            // Remove from array
+            medicineData.splice(index, 1);
+            filteredData = [...medicineData];
+            
+            // Update display
+            renderTable();
+            
+            alert('Medicine deleted successfully!');
+          }
+        }
+      }
+    });
+
+    // Pagination functionality
+    prevBtn.addEventListener('click', function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    });
+
+    nextBtn.addEventListener('click', function() {
+      const maxPage = Math.ceil(filteredData.length / itemsPerPage);
+      if (currentPage < maxPage) {
+        currentPage++;
+        renderTable();
+      }
+    });
+
+    // Update summary cards
+    function updateSummaryCards() {
+      const expired = medicineData.filter(med => med.status === 'expired').length;
+      const expiring = medicineData.filter(med => med.status === 'expiring').length;
+      const active = medicineData.filter(med => med.status === 'active').length;
+      
+      document.querySelector('.card-expired .card-content p').textContent = expired;
+      document.querySelector('.card-expiring .card-content p').textContent = expiring;
+      document.querySelector('.card-active .card-content p').textContent = active;
+    }
+    
+    // Initialize summary cards
+    updateSummaryCards();
+  </script>
+</body>
+</html>
+   
