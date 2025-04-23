@@ -43,51 +43,24 @@
         </div>
     </header>
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Patient Info Card -->
-        <div class="bg-white shadow rounded p-6 mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full text-primary">
-                        <i class="ri-user-line ri-2x"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold">Chary</h2>
-                        <div class="flex space-x-6 text-sm text-gray-600 mt-1">
-                            <span>ID: PT-78452</span>
-                            <span>Age: 21</span>
-                            <span>Gender: Male</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex space-x-3">
-                    <button class="bg-primary text-white px-4 py-2 rounded-button flex items-center whitespace-nowrap">
-                        <i class="ri-user-settings-line mr-2"></i> Patient Details
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-3 gap-4 text-sm">
-                <div class="bg-gray-50 p-3 rounded">
-                    <span class="text-gray-500">Blood Group</span>
-                    <p class="font-medium">O Positive</p>
-                </div>
-                <div class="bg-gray-50 p-3 rounded">
-                    <span class="text-gray-500">Allergies</span>
-                    <p class="font-medium">Penicillin, Peanuts</p>
-                </div>
-                <div class="bg-gray-50 p-3 rounded">
-                    <span class="text-gray-500">Last Visit</span>
-                    <p class="font-medium">April 8, 2025</p>
-                </div>
-            </div>
-        </div>
+
         <!-- Add Medicine Form -->
         <div id="addMedicineSection" class="bg-white shadow rounded mb-8 hidden">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-lg font-medium text-gray-900">Add New Medication</h2>
             </div>
             <div class="p-6">
-                <form id="addMedicineForm">
+                <form id="addMedicineForm" method="post" action="/addMedicines">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="patientUsername" class="block text-sm font-medium text-gray-700 mb-1">
+                                Patient Username*
+                            </label>
+                            <input type="text" id="patientUsername" name="patientUsername" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary text-sm"
+                                placeholder="Enter patient’s username">
+                        </div>
+
                         <div>
                             <label for="medicineName" class="block text-sm font-medium text-gray-700 mb-1">Medicine
                                 Name*</label>
@@ -102,20 +75,6 @@
                                 placeholder="e.g. 500mg">
                         </div>
                         <div>
-                            <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                            <div class="flex">
-                                <input type="number" id="duration" name="duration"
-                                    class="w-2/3 px-4 py-2 border border-gray-300 rounded-l focus:ring-primary focus:border-primary text-sm"
-                                    placeholder="Duration">
-                                <select id="durationUnit" name="durationUnit"
-                                    class="w-1/3 border-l-0 border border-gray-300 rounded-r focus:ring-primary focus:border-primary text-sm custom-select pr-8">
-                                    <option value="days">Days</option>
-                                    <option value="weeks">Weeks</option>
-                                    <option value="months">Months</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
                             <label for="frequency"
                                 class="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
                             <select id="frequency" name="frequency"
@@ -125,17 +84,9 @@
                                 <option value="thrice">Thrice daily</option>
                                 <option value="four">Four times daily</option>
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Timing</label>
-                            <div class="flex items-center mt-2">
-                                <label class="toggle-pill mr-2">
-                                    <input type="checkbox" id="mealTiming" name="mealTiming">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="text-sm text-gray-700">After meal</span>
-                                <span class="text-sm text-gray-500 ml-2">(Off means before meal)</span>
-                            </div>
+                            <!-- immediately after the frequency dropdown -->
+                            <div id="timeSelectors" class="md:col-span-3 grid grid-cols-1 gap-6"></div>
+
                         </div>
                         <div class="md:col-span-3">
                             <label for="instructions" class="block text-sm font-medium text-gray-700 mb-1">Additional
@@ -158,338 +109,34 @@
                 </form>
             </div>
         </div>
-        <!-- Medicine List -->
-        <div class="bg-white shadow rounded">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-lg font-medium text-gray-900">Current Medications</h2>
+
+
+        <!-- Patient Info Card -->
+        {% for i in patientUsername %}
+        <div class="bg-white shadow rounded p-6 mb-8">
+            <div class="flex items-center justify-between mb-4" style="margin-bottom: -1px;">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full text-primary">
+                        <i class="ri-user-line ri-2x"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold">{{ i[0] }}</h2>
+                    </div>
+                </div>
                 <div class="flex space-x-3">
-                    <div class="relative">
-                        <input type="text" id="searchMedicine" placeholder="Search medications"
-                            class="pl-10 pr-4 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary text-sm w-64">
-                        <div
-                            class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-400">
-                            <i class="ri-search-line"></i>
-                        </div>
-                    </div>
-                    <select id="sortMedicine"
-                        class="px-4 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary text-sm custom-select pr-8">
-                        <option value="name">Sort by Name</option>
-                        <option value="recent">Sort by Recent</option>
-                        <option value="duration">Sort by Duration</option>
-                    </select>
+                    <form action="{{ url_for('showPatientDetails') }}" method="POST">
+                        <input type="hidden" name="username" value="{{ i[0] }}">
+                        <button type="submit"
+                            class="bg-primary text-white px-4 py-2 rounded-button flex items-center whitespace-nowrap">
+                            <i class="ri-user-settings-line mr-2"></i> Patient Details
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6" id="medicineTableBody">
-                <div
-                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 relative group">
-                    <div
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <button
-                            class="edit-btn w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full border border-blue-200"
-                            data-id="1">
-                            <i class="ri-pencil-line"></i>
-                        </button>
-                        <button
-                            class="delete-btn w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200"
-                            data-id="1">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <i class="ri-capsule-line text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Amoxicillin</h3>
-                        </div>
-                        <span
-                            class="px-3 py-1 inline-flex text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
-                    </div>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-test-tube-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Dosage</span>
-                            </div>
-                            <span class="text-sm text-gray-600">500mg</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-calendar-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Duration</span>
-                            </div>
-                            <span class="text-sm text-gray-600">7 days</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-time-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Frequency</span>
-                            </div>
-                            <span class="text-sm text-gray-600">Thrice daily</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-information-line text-primary mr-3 mt-0.5"></i>
-                            <p class="text-sm text-gray-600">Take with plenty of water. Avoid dairy products within 2
-                                hours.</p>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 relative group">
-                    <div
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <button
-                            class="edit-btn w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full border border-blue-200"
-                            data-id="2">
-                            <i class="ri-pencil-line"></i>
-                        </button>
-                        <button
-                            class="delete-btn w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200"
-                            data-id="2">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <i class="ri-capsule-line text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Lisinopril</h3>
-                        </div>
-                        <span
-                            class="px-3 py-1 inline-flex text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
-                    </div>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-test-tube-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Dosage</span>
-                            </div>
-                            <span class="text-sm text-gray-600">10mg</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-calendar-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Duration</span>
-                            </div>
-                            <span class="text-sm text-gray-600">30 days</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-time-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Frequency</span>
-                            </div>
-                            <span class="text-sm text-gray-600">Once daily</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-information-line text-primary mr-3 mt-0.5"></i>
-                            <p class="text-sm text-gray-600">Take in the morning. Monitor blood pressure regularly.</p>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 relative group">
-                    <div
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <button
-                            class="edit-btn w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full border border-blue-200"
-                            data-id="3">
-                            <i class="ri-pencil-line"></i>
-                        </button>
-                        <button
-                            class="delete-btn w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200"
-                            data-id="3">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <i class="ri-capsule-line text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Metformin</h3>
-                        </div>
-                        <span
-                            class="px-3 py-1 inline-flex text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
-                    </div>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-test-tube-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Dosage</span>
-                            </div>
-                            <span class="text-sm text-gray-600">850mg</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-calendar-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Duration</span>
-                            </div>
-                            <span class="text-sm text-gray-600">90 days</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-time-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Frequency</span>
-                            </div>
-                            <span class="text-sm text-gray-600">Twice daily</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-information-line text-primary mr-3 mt-0.5"></i>
-                            <p class="text-sm text-gray-600">Take with food to minimize gastrointestinal side effects.
-                                Monitor blood glucose levels.</p>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 relative group">
-                    <div
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <button
-                            class="edit-btn w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full border border-blue-200"
-                            data-id="4">
-                            <i class="ri-pencil-line"></i>
-                        </button>
-                        <button
-                            class="delete-btn w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200"
-                            data-id="4">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <i class="ri-capsule-line text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Atorvastatin</h3>
-                        </div>
-                        <span
-                            class="px-3 py-1 inline-flex text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                    </div>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-test-tube-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Dosage</span>
-                            </div>
-                            <span class="text-sm text-gray-600">20mg</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-calendar-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Duration</span>
-                            </div>
-                            <span class="text-sm text-gray-600">60 days</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-time-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Frequency</span>
-                            </div>
-                            <span class="text-sm text-gray-600">Once daily (Evening)</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-information-line text-primary mr-3 mt-0.5"></i>
-                            <p class="text-sm text-gray-600">Take in the evening. Avoid grapefruit juice. Report any
-                                muscle pain.</p>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 relative group">
-                    <div
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                        <button
-                            class="edit-btn w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-full border border-blue-200"
-                            data-id="5">
-                            <i class="ri-pencil-line"></i>
-                        </button>
-                        <button
-                            class="delete-btn w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-full border border-red-200"
-                            data-id="5">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <i class="ri-capsule-line text-primary text-xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900">Omeprazole</h3>
-                        </div>
-                        <span
-                            class="px-3 py-1 inline-flex text-xs font-medium rounded-full bg-gray-100 text-gray-800">Completed</span>
-                    </div>
-                    <div class="space-y-3 mt-6">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-test-tube-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Dosage</span>
-                            </div>
-                            <span class="text-sm text-gray-600">40mg</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-calendar-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Duration</span>
-                            </div>
-                            <span class="text-sm text-gray-600">14 days</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-time-line text-primary mr-3"></i>
-                                <span class="text-sm font-medium">Frequency</span>
-                            </div>
-                            <span class="text-sm text-gray-600">Once daily (Before breakfast)</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-information-line text-primary mr-3 mt-0.5"></i>
-                            <p class="text-sm text-gray-600">Take 30 minutes before breakfast. Swallow whole, do not
-                                crush or chew.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium">1</span> to <span class="font-medium">5</span> of <span
-                        class="font-medium">12</span> medications
-                </div>
-                <div class="flex space-x-2">
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-button text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                        disabled>
-                        Previous
-                    </button>
-                    <button
-                        class="px-3 py-1 bg-primary text-white rounded-button text-sm font-medium hover:bg-primary/90 whitespace-nowrap">
-                        1
-                    </button>
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-button text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
-                        2
-                    </button>
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-button text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
-                        3
-                    </button>
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-button text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">
-                        Next
-                    </button>
-                </div>
-            </div>
+
         </div>
+        {% endfor %}
+
     </main>
     <!-- Edit Medicine Modal -->
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -632,6 +279,50 @@
         </button>
     </div>
     <script>
+
+
+        const freqMap = {
+            once: 1,
+            twice: 2,
+            thrice: 3,
+            four: 4
+        };
+
+        const frequencyDropdown = document.getElementById('frequency');
+        const container = document.getElementById('timeSelectors');
+
+        function updateTimeSelectors() {
+            const count = freqMap[frequencyDropdown.value] || 0;
+            container.innerHTML = '';
+
+            for (let i = 1; i <= count; i++) {
+                const wrap = document.createElement('div');
+
+                const lbl = document.createElement('label');
+                lbl.setAttribute('for', `time${i}`);
+                lbl.className = 'block text-sm font-medium text-gray-700 mb-1';
+                lbl.textContent = `Time ${i}`;
+
+                const inp = document.createElement('input');
+                inp.type = 'time';
+                inp.id = `time${i}`;
+                inp.name = `times${i}`;
+                inp.required = true;
+                inp.className = 'w-full px-4 py-2 border border-gray-300 rounded focus:ring-primary focus:border-primary text-sm';
+
+                wrap.appendChild(lbl);
+                wrap.appendChild(inp);
+                container.appendChild(wrap);
+            }
+        }
+
+        frequencyDropdown.addEventListener('change', updateTimeSelectors);
+
+        // 👇 Trigger it on page load
+        window.addEventListener('DOMContentLoaded', updateTimeSelectors);
+
+
+
         document.addEventListener('DOMContentLoaded', function () {
             // Add Medicine Button Toggle
             const addMedicineBtn = document.getElementById('addMedicineBtn');
@@ -647,11 +338,7 @@
             // Add Medicine Form Submission
             const addMedicineForm = document.getElementById('addMedicineForm');
             addMedicineForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                // Show success notification
                 showNotification('Success', 'Medication has been added successfully.', 'success');
-                // Reset the form
-                addMedicineForm.reset();
             });
             // Edit Medicine Modal
             const editButtons = document.querySelectorAll('.edit-btn');
@@ -809,6 +496,7 @@
                         // Sort by recent (default)
                         return 0; // In a real app, this would sort by date added/modified
                     }
+
                 });
                 // Clear table and append sorted rows
                 tableBody.innerHTML = '';
@@ -817,6 +505,7 @@
                 });
             });
         });
+
     </script>
 </body>
 

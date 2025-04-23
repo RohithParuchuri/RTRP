@@ -21,7 +21,6 @@ def home():
     isDoc = session.get('isDoc', 0)
     return render_template('index.html', profileSec=profileSec)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('profileSec') == 1:
@@ -94,15 +93,121 @@ def register():
 @app.route('/docpage', methods=['GET', 'POST'])
 def docpage():
     if session.get('isDoc', 0) == 0:
-        return redirect(url_for('login'))
+        return redirect(url_for('patientPage'))
     print(session.get('isDoc'))
-    return render_template('docpage.html')
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("select distinct patientUsername from medications where doctor = (?)", (session.get('username'),))
+    patientUsername = cursor.fetchall()
+    conn.close()
+    return render_template('docpage.html', patientUsername = patientUsername)
+
+@app.route('/addMedicines', methods=['GET', 'POST'])
+def addMedicines():
+    if session.get("profileSec", 0) == 0:
+        return redirect('/login')
+    if session.get('isDoc', 0) == 0:
+        return redirect(url_for('login'))
+    
+    Pusername = request.form["patientUsername"]
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('''select id from user where username = (?)''', (Pusername,))
+    id = cursor.fetchone()
+    if id is None:
+        return "No Patient found"
+
+    Mname = request.form["medicineName"]
+    dosage = request.form["dosage"]
+    frequency = request.form["frequency"]
+    instruction = request.form["instructions"]
+
+    time1, time2, time3, time4 = '', '', '', ''
+
+    print(request.form)
+
+    if frequency == 'once':
+        time1 = request.form['times1']
+    elif frequency == 'twice':
+        time1 = request.form['times1']
+        time2 = request.form['times2']
+    elif frequency == 'thrice':
+        time1 = request.form['times1']
+        time2 = request.form['times2']
+        time3 = request.form['times3']
+    elif frequency == 'four':
+        time1 = request.form['times1']
+        time2 = request.form['times2']
+        time3 = request.form['times3']
+        time4 = request.form['times4']
+
+    # print(request.form)
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+    INSERT INTO medications (patientUsername, medicineName, dosage, frequency, instructions, time1, time2, time3, time4, doctor)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (Pusername, Mname, dosage, frequency, instruction, time1, time2, time3, time4, session.get("username", '0')))
+    
+    conn.commit()
+    conn.close()
+
+    return redirect('docpage')
+
+@app.route('/showPatientDetails', methods=['POST', 'GET'])
+def showPatientDetails():
+    pusername = request.form['username']
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        select * from medications where patientUsername = (?)
+    ''', (pusername,))
+    data = cursor.fetchall()
+    conn.close()
+
+    print(pusername)
+    return render_template('showPatientDetails.html', medication_data = data)
+    # return data
+
+@app.route('/delete_medication', methods=['POST', 'GET'])
+def delete_medication():
+    if session.get('isDoc', 0) == 0:
+        return redirect(url_for('login'))
+    pusername = request.form['pusername']
+    med_id = request.form['medid']
+    print(med_id)
+    conn = get_db_connection()
+    conn.execute('DELETE FROM medications WHERE patientUsername = ? and medicineName = ?', (pusername, med_id))
+    conn.commit()
+    conn.close()
+    # return med_id
+    return redirect(url_for('docpage'))
+
 
 @app.route('/inventory', methods=['GET', 'POST'])
 def inventory():
     if session.get('isDoc', 0) == 1:
         return redirect(url_for('login'))
     return render_template('inventory.html')
+
+@app.route('/patientPage', methods=['GET', 'POST'])
+def patientPage():
+    if session.get('isDoc', 0) == 1 or session.get("profileSec", 0) == 0:
+        return redirect(url_for('login'))
+    
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row  # Add this line
+    cursor = conn.cursor()
+    cursor.execute('''
+        select * from medications where patientUsername = (?)
+    ''', (session.get('username'),))
+    data = cursor.fetchall()
+    conn.close()
+    # print(session.get('username'))
+    return render_template("patientPage.html", medication_data = data)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
