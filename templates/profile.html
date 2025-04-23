@@ -41,7 +41,7 @@
               <a href="{{url_for('home')}}" class="nav-link ">Home</a>
             </li>
             <li>
-              <a href="{{url_for('inventory') if not isDoc else url_for('docpage')}}" class="nav-link">{{'Inventory' if not isDoc else 'Docpage'}}</a>
+              <a href="{{url_for('patientPage') if not isDoc else url_for('docpage')}}" class="nav-link">{{'patientPage' if not isDoc else 'Docpage'}}</a>
             </li>
           </ul>
         </nav>
@@ -152,7 +152,6 @@
               </button>
             </div>
           </div>
-
           <div>
             <h2 class="profile-section-title">Medical Records</h2>
             <div class="timeline">

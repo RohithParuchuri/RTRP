@@ -12,6 +12,7 @@ if (mobileMenuBtn && navLinks) {
 // Close mobile menu when clicking on a link
 const navItems = document.querySelectorAll('.nav-links a');
 navItems.forEach(item => {
+  alert("mobile")
   item.addEventListener('click', () => {
     if (mobileMenuBtn.classList.contains('active')) {
       mobileMenuBtn.classList.remove('active');
