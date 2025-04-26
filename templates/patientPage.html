@@ -15,6 +15,8 @@
 </head>
 
 <body class="bg-gray-50 min-h-screen">
+    <button onclick="showNotification('Paracetamol', '1 tablet')">Test Notification</button>
+
     <nav class="navbar">
         <a href="{{ url_for('home') }}" class="navbar-brand">Alerto</a>
         <div class="navbar-nav">
@@ -70,12 +72,18 @@
             </div>
 
             <!-- Rest of the card content -->
+            {% if medication[3] %}
+            <div class="mt-4">
+                <span>
+                    <P class="dosage">{{ medication[3] }}</P>
+                </span>
+            </div>
+            {% endif %}
             {% if medication[5] %}
             <div class="mt-4">
                 <p class="text-gray-700 text-sm">{{ medication[5] }}</p>
             </div>
             {% endif %}
-
             <div class="mt-6">
                 <h3 class="text-sm font-semibold text-gray-600 mb-2">Schedule Times</h3>
                 <div class="flex gap-2 flex-wrap">
@@ -96,7 +104,7 @@
         </button>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // document.addEventListener('DOMContentLoaded', function () {
             // Elements
             const notificationBtn = document.getElementById('enable-notifications');
             const permissionDiv = document.querySelector('.notification-permission');
@@ -126,7 +134,7 @@
                     const medName = card.querySelector('h2').textContent;
                     const times = Array.from(card.querySelectorAll('.bg-blue-100'))
                         .map(time => time.textContent.trim());
-                    const dosage = card.querySelector('.text-gray-700')?.textContent || '';
+                    const dosage = card.querySelector('.dosage')?.textContent || '';
 
                     times.forEach(timeStr => {
                         const [hours, minutes] = timeStr.split(':');
@@ -152,24 +160,24 @@
                 if (Notification.permission === 'granted') {
                     new Notification(`Time for ${medName}`, {
                         body: `Dosage: ${dosage}`,
-                        icon: '/static/img/dp.png'
+                        icon: '/static/img/alert.png'
                     });
-                    // playAlertSound();
+                    playAlertSound();
                 }
             }
 
-            // function playAlertSound() {
-            //     const audio = new Audio('/static/audio/alert.mp3');
-            //     audio.play().catch(error => {
-            //         console.error('Audio playback failed:', error);
-            //     });
-            // }
+            function playAlertSound() {
+                const audio = new Audio('/static/sounds/noti.mp3');
+                audio.play().catch(error => {
+                    console.error('Audio playback failed:', error);
+                });
+            }
 
             // Initial check
             if (Notification.permission === 'granted') {
                 startAlarms();
             }
-        });
+        // });
     </script>
 </body>
 
